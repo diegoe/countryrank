@@ -20,12 +20,12 @@ def display_data(request):
 
         if q_country is not None:
             r_countries = Country.objects.filter(code=q_country)
-            if len(r_countries):
+            if r_countries.exists():
                 r_cyi = r_cyi.filter(country=r_countries[0])
 
         if q_indicator is not None:
             r_indicators = Indicator.objects.filter(code=q_indicator)
-            if len(r_indicators):
+            if r_indicators.exists():
                 r_cyi = r_cyi.filter(indicator=r_indicators[0])
 
         if q_year is not None and q_year.isdigit():
