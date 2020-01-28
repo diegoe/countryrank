@@ -116,3 +116,24 @@ class DataAPIClientTestCase(TestCase):
 
         import pdb
         pdb.set_trace()
+
+    def test_json_data_api_single_country(self):
+        for country in self.test_data_countries:
+            response = self.client.get(
+                    '/display_data/?country=' +
+                    country.code)
+
+            self.assertEqual(response.status_code, 200)
+            json = response.json()
+
+            self.assertIn("CountryYearIndicators", json)
+            self.assertIn("Countries", json)
+            self.assertIn("Indicators", json)
+
+            inds = set([x.indicator.code for x in CountryYearIndicator.objects.filter(country=country)])
+
+            self.assertEqual(len(json['Countries']), 1)
+            self.assertEqual(len(json['Indicators']), len(inds))
+            self.assertEqual(
+                    len(json['CountryYearIndicators']),
+                    CountryYearIndicator.objects.filter(country=country).count())
