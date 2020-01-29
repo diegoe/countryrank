@@ -4,7 +4,7 @@
 # Note that <name> will be used as a filename and even directory name
 # for files that get unzipped by download_and_extract_uris()
 
-uris=(
+BACKCOUNTRY_URIS=(
     ( 'EN.ATM.CO2E.PC', 'CO2 emissions (metric tons per capita)',
         'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.PC?downloadformat=csv' ),
     ( 'IP.PAT.NRES', 'Patent applications, nonresidents',
