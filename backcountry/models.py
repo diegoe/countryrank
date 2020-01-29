@@ -26,7 +26,7 @@ class CountryYearIndicator(models.Model):
     # types, using something like Field.choices and a `value` property
     # based on models.CharField, handling validation and integrity
     # manually. But that's of course overkill for this demo.
-    value = models.DecimalField(max_digits=19, decimal_places=10)
+    value = models.DecimalField(max_digits=19, decimal_places=5)
 
     def __str__(self):
         return "%s for %s on %s" % (
