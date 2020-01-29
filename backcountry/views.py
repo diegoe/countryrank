@@ -18,6 +18,8 @@ def display_data(request):
         r_countries = Country.objects.all()
         r_indicators = Indicator.objects.all()
 
+        # TODO: This can be improved by using
+        # Country.countryyearindicator_set and similar
         if q_country is not None:
             r_countries = Country.objects.filter(code=q_country)
             if r_countries.exists():
