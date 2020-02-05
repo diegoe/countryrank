@@ -21,6 +21,11 @@ the 3.6 branch.
 
 ### TODO: Explain how to install other prerequisites through pip
 
+`forevue`, the included frontend, was built targetting Vue 2.6 and node
+10.x. `yarn install` should take care of all the JS module dependencies,
+but keep in mind the above versions in case node or Vue give you any
+trouble.
+
 How to install
 ===
 
@@ -38,12 +43,43 @@ $ python manage.py downloadsources
 $ python manage.py ingestcsv
 ```
 
-The project should now be good to go, and you should be able to visit
+The backend should now be good to go, and you should be able to run
 Django's test server:
 
 ```shell
 $ python manage.py runserver
 ```
+
+To get the frontend running you can just rely on the currently checked
+in version in `backcountry/static/`, or you can run a development server
+from `forevue`. You will need yarn, npm and nodejs -- at a minimum.
+
+```shell
+# Install all node dependencies
+$ yarn install
+```
+
+You can either run a development server that reloads as you make changes
+in `forevue/src`, or you can run the version currently checked in, or
+produce a new build of it:
+
+```shell
+# Serve a development build that runs on
+# http://127.0.0.1:8080/static/backcountry/
+$ yarn serve
+
+# Alternatively, produce a new build to be served by Django
+$ yarn build
+```
+
+`yarn build` will output by default to
+`backcountry/static/backcountry/`, and `yarn serve` will proxy any
+axios/fetch request to Django's server on `127.0.0.1:8000`.
+
+If you change the IP or port were Django is running, you will need to
+update `forevue/vue.config.js`. Also note that `CORS` security/policy
+might throw you off if you end up changing ports or IPs of the
+development server(s).
 
 Running tests
 ===
