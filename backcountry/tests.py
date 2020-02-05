@@ -91,7 +91,7 @@ class DataAPIClientTestCase(TestCase):
         insert_test_data(self)
 
     def test_json_data_api_get_all(self):
-        response = self.client.get('/display_data/')
+        response = self.client.get('/display_data/?v=1')
 
         self.assertEqual(response.status_code, 200)
         json = response.json()
@@ -112,16 +112,11 @@ class DataAPIClientTestCase(TestCase):
                 len(json['Indicators']),
                 Indicator.objects.count())
 
-        return
-
-        import pdb
-        pdb.set_trace()
-
     def test_json_data_api_single_country(self):
         for country in self.test_data_countries:
             response = self.client.get(
-                    '/display_data/?country=' +
-                    country.code)
+                    '/display_data/',
+                    { 'v' : 1, 'country' : country.code })
 
             self.assertEqual(response.status_code, 200)
             json = response.json()
