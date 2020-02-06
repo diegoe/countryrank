@@ -1,13 +1,19 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from backcountry.models import CountryYearIndicator, Country, Indicator
+
+import json
 
 def index(request):
     return HttpResponse('''
         Placeholder for enduser UI.
         ''')
 
+# TODO: This is a cheap way to avoid having to figure out what to do
+# with the csfr cookie from Django.
+@csrf_exempt
 def display_data(request):
     jsonres = { 'data' : None }
 
@@ -63,5 +69,17 @@ def display_data(request):
                 }
     elif request.method == 'POST':
         jsonres = { 'data' : None }
+    elif request.method == 'PATCH':
+        jsonres = { 'data' : 'PATCH' }
+        patch = json.loads(request.body.decode())
+
+        if patch and patch.get('op', None) == 'replace':
+            if patch.get('path', None) and patch.get('value', None):
+                path_id = patch['path'].split('/')[2]
+                value = patch['value']
+
+                cyi = CountryYearIndicator.objects.get(pk=path_id)
+                cyi.value = value
+                cyi.save()
 
     return JsonResponse(jsonres)
