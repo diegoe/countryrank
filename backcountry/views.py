@@ -9,7 +9,7 @@ def index(request):
         ''')
 
 def display_data(request):
-    json = { 'data' : None }
+    jsonres = { 'data' : None }
 
     if request.method == 'GET':
         q_country = request.GET.get('country', None)
@@ -29,6 +29,7 @@ def display_data(request):
             tmp_r[c.code] = {}
             tmp_r[c.code]['code'] = c.code
             tmp_r[c.code]['name'] = c.name
+            tmp_r[c.code]['id'] = c.id
             tmp_r[c.code]['indicators'] = {}
 
             # We could iterate over the whole countryyearindicator_set,
@@ -47,23 +48,20 @@ def display_data(request):
                     cyi_pool = cyi_pool.filter(year=q_year)
 
                 tmp_r[c.code]['indicators'][ind.code] = {}
-                tmp_r[c.code]['indicators'][ind.code]['data'] = [{ 'year' : x.year, 'value' : x.value } for x in cyi_pool]
-                tmp_r[c.code]['indicators'][ind.code]['chartdata'] = {
-                        'data': tmp_r[c.code]['indicators'][ind.code]['data'],
-                        }
+                tmp_r[c.code]['indicators'][ind.code]['data'] = [{ 'year' : x.year, 'value' : x.value, 'id': x.id } for x in cyi_pool]
                 tmp_r[c.code]['indicators'][ind.code]['code'] = ind.code
                 tmp_r[c.code]['indicators'][ind.code]['name'] = ind.name
+                tmp_r[c.code]['indicators'][ind.code]['id'] = ind.id
 
         r_countries = list(r_countries.values())
         r_indicators = list(r_indicators.values())
 
-        json = {
+        jsonres = {
                 'CountryYearIndicators' : tmp_r,
                 'Countries' : r_countries,
                 'Indicators' : r_indicators,
                 }
-
     elif request.method == 'POST':
-        json = { 'data' : None }
+        jsonres = { 'data' : None }
 
-    return JsonResponse(json)
+    return JsonResponse(jsonres)
