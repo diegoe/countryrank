@@ -25,6 +25,11 @@ export default {
   data: function () {
     return {
       jsondata: '',
+      /*
+       TODO: Ideally we could abstract this in the Indicator model on
+       the backend, or we could simply have a bunch of purely visual
+       components that inherit from Chunky and Trendy.
+       */
       formats: {
         'EN.ATM.CO2E.PC': 5,
         'IP.PAT.RESD': 0,
@@ -52,7 +57,7 @@ export default {
     getJsonData: function() {
       axios.get('/display_data/?country=PER').then(res => {
          this.jsondata = res.data;
-        });
+      });
     },
   },
   mounted() {
@@ -62,11 +67,13 @@ export default {
 </script>
 
 <style>
-#app {
+* {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+}
+#app {
   margin-top: 60px;
   margin: 60px 10%;
 }

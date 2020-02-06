@@ -3,8 +3,14 @@
     <table class="chunkytable" v-for="(ind,index) in chunk(datasets)" :key="index">
       <tbody>
         <tr v-for="i in ind" :key="i.id">
-          <td>{{ i.year }}</td>
-          <td>{{ i.value }}</td>
+          <td>
+            <label>
+              {{ i.year }}
+            </label>
+          </td>
+          <td>
+            <EditableCell :value="i.value" :objid="i.id" />
+          </td>
         </tr>
       </tbody>
     </table>
@@ -12,9 +18,12 @@
 </template>
 
 <script>
+import EditableCell from './EditableCell';
+
 export default {
   name: 'ChunkyTable',
   components: {
+    EditableCell,
   },
   props: [
     'datasets',
@@ -31,7 +40,7 @@ export default {
       let chunkSize=10;
       let  R = [];
       for (let i=0,len=arr.length; i<len; i+=chunkSize) {
-				R.push(arr.slice(i,i+chunkSize));
+        R.push(arr.slice(i,i+chunkSize));
       }
       return R;
     },
