@@ -4,8 +4,7 @@
       <strong>{{ legend.year }}</strong><br/>
       {{ legend.value }}
     </p>
-    <TrendChart :datasets="datasets" :interactive="true" :min="0" @mouse-move="onMouseMove">
-    </TrendChart>
+    <TrendChart :datasets="datasets" :interactive="true" :min="0" @mouse-move="onMouseMove"/>
   </div>
 </template>
 
@@ -19,6 +18,7 @@ export default {
   },
   props: [
     'datasets',
+    'name',
   ],
   data: function() {
     return {
@@ -32,23 +32,18 @@ export default {
         value: this.currentLegend ? this.currentLegend.value : '',
       };
     },
-    yearRange: function() {
-      return {
-        from: 0,
-        to: 0,
-      }
-    },
   },
   methods: {
     onMouseMove(params) {
       if (!params) {
         this.currentLegend = null;
         return;
+      } else {
+        this.currentLegend = {
+          year: params.data[0].year,
+          value: params.data[0].value,
+        };
       }
-      this.currentLegend = {
-        year: params.data[0].year,
-        value: params.data[0].value,
-      };
     }
   },
 }

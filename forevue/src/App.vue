@@ -1,28 +1,12 @@
 <template>
   <div id="app">
-    <div v-for="item in jsondata.CountryYearIndicators" :key="item.code">
+    <div v-for="item in jsondata.CountryYearIndicators" :key="item.id">
       <h2>{{ item.name }}</h2>
       <div v-for="ind in item.indicators" :key="ind.code" class="trendyblock">
-        <h4>{{ ind.name }}</h4>
-        <TrendyChart :datasets="[ind.chartdata]" />
+        <h3>{{ ind.name }} ({{ yearRange(ind.data).from }} – {{ yearRange(ind.data).to }}) </h3>
+        <TrendyChart :datasets="[ind]" :name="ind.name" />
+        <ChunkyTable :datasets="ind.data" :name="ind.name" />
       </div>
-      <table class="trendytable">
-        <tbody>
-          <tr v-for="i in item.indicators" :key="i.code">
-            <td>
-              <h3>{{ i.name }}</h3>
-              <tr v-for="ind in i.data" :key="ind.year">
-                <td>
-                  {{ ind.year }}
-                </td>
-                <td>
-                  {{ ind.value }}
-                </td>
-              </tr>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </template>
@@ -30,25 +14,20 @@
 <script>
 import axios from 'axios';
 import TrendyChart from './components/TrendyChart';
+import ChunkyTable from './components/ChunkyTable';
 
 export default {
   name: 'app',
   components: {
     TrendyChart,
+    ChunkyTable,
   },
   data: function () {
     return {
       jsondata: '',
-      currentLegend : null,
     };
   },
   computed: {
-    legend: function() {
-      return {
-        year: this.currentLegend ? this.currentLegend.year : '',
-        value: this.currentLegend ? this.currentLegend.value : '',
-      };
-    }
   },
   mounted() {
     axios.get('/display_data/?country=PER').then(res => {
@@ -56,15 +35,16 @@ export default {
       });
   },
   methods: {
-    onMouseMove(params) {
-      if (!params) {
-        return;
+    yearRange: function(dataset) {
+      if (!dataset) {
+        return { from: 0, to: 0 }
+      } else {
+        return {
+          from: dataset[0].year,
+          to: dataset[dataset.length - 1].year,
+        }
       }
-      this.currentLegend = {
-        year: params.data[0].year,
-        value: params.data[0].value,
-      };
-    }
+    },
   },
 }
 </script>
@@ -79,16 +59,7 @@ export default {
   margin: 60px 10%;
 }
 .trendyblock {
-  width: 45%;
   margin: auto;
   margin-right: 5%;
-  display: inline-block;
-}
-.trendytable {
-  /*
-  margin-left: 5%;
-  width: 45%;
-  display: inline-block;
-  */
 }
 </style>
