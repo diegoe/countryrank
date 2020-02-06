@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table class="chunkytable" v-for="ind in chunk(datasets)" :key="ind">
+    <table class="chunkytable" v-for="(ind,index) in chunk(datasets)" :key="index">
       <tbody>
         <tr v-for="i in ind" :key="i.id">
           <td>{{ i.year }}</td>
@@ -30,8 +30,9 @@ export default {
     chunk: function chunk(arr) {
       let chunkSize=10;
       let  R = [];
-      for (let i=0,len=arr.length; i<len; i+=chunkSize)
-        R.push(arr.slice(i,i+chunkSize));
+      for (let i=0,len=arr.length; i<len; i+=chunkSize) {
+				R.push(arr.slice(i,i+chunkSize));
+      }
       return R;
     },
   },
@@ -42,7 +43,6 @@ export default {
 .chunkytable {
   margin-bottom: 2%;
   margin-right: 5%;
-  width: 20%;
   display: inline-block;
   vertical-align: top;
 }

@@ -4,7 +4,7 @@
       <h2>{{ item.name }}</h2>
       <div v-for="ind in item.indicators" :key="ind.code" class="trendyblock">
         <h3>{{ ind.name }} ({{ yearRange(ind.data).from }} – {{ yearRange(ind.data).to }}) </h3>
-        <TrendyChart :datasets="[ind]" :name="ind.name" />
+        <TrendyChart :datasets="ind" :name="ind.name" :decimals="formats[ind.code]"/>
         <ChunkyTable :datasets="ind.data" :name="ind.name" />
       </div>
     </div>
@@ -25,26 +25,38 @@ export default {
   data: function () {
     return {
       jsondata: '',
+      formats: {
+        'EN.ATM.CO2E.PC': 5,
+        'IP.PAT.RESD': 0,
+        'SP.DYN.LE00.IN': 3,
+        'IP.PAT.NRES': 0,
+        'NY.GDP.MKTP.CD': 5,
+        'SP.POP.TOTL': 0,
+        'TX.VAL.TECH.MF.ZS': 5,
+      },
     };
   },
   computed: {
   },
-  mounted() {
-    axios.get('/display_data/?country=PER').then(res => {
-       this.jsondata = res.data;
-      });
-  },
   methods: {
     yearRange: function(dataset) {
       if (!dataset) {
-        return { from: 0, to: 0 }
+        return { from: 0, to: 0 };
       } else {
         return {
           from: dataset[0].year,
           to: dataset[dataset.length - 1].year,
-        }
+        };
       }
     },
+    getJsonData: function() {
+      axios.get('/display_data/?country=PER').then(res => {
+         this.jsondata = res.data;
+        });
+    },
+  },
+  mounted() {
+    this.getJsonData();
   },
 }
 </script>

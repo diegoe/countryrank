@@ -4,7 +4,7 @@
       <strong>{{ legend.year }}</strong><br/>
       {{ legend.value }}
     </p>
-    <TrendChart :datasets="datasets" :interactive="true" :min="0" @mouse-move="onMouseMove"/>
+    <TrendChart :datasets="formattedDataset" :interactive="true" :min="0" @mouse-move="onMouseMove"/>
   </div>
 </template>
 
@@ -19,10 +19,11 @@ export default {
   props: [
     'datasets',
     'name',
+    'decimals',
   ],
   data: function() {
     return {
-      currentLegend : null,
+      currentLegend: null,
     };
   },
   computed: {
@@ -31,6 +32,17 @@ export default {
         year: this.currentLegend ? this.currentLegend.year : '',
         value: this.currentLegend ? this.currentLegend.value : '',
       };
+    },
+    formattedDataset: function() {
+      let raw = this.datasets.data;
+      let formatted = raw.map(x => {
+        x.value = Number(x.value).toFixed(this.decimals);
+        return x;
+      });
+      return [{
+        data: formatted,
+        fill: true,
+      }];
     },
   },
   methods: {
