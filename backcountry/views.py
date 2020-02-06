@@ -8,45 +8,9 @@ def index(request):
         Placeholder for enduser UI.
         ''')
 
-def display_data_v1(request):
-    if request.method == 'GET':
-        q_country = request.GET.get('country', None)
-        q_indicator = request.GET.get('indicator', None)
-        q_year = request.GET.get('year', None)
+def display_data(request):
+    json = { 'data' : None }
 
-        r_cyi = CountryYearIndicator.objects.all()
-        r_countries = Country.objects.all()
-        r_indicators = Indicator.objects.all()
-
-        # TODO: This can be improved by using
-        # Country.countryyearindicator_set and similar
-        if q_country is not None:
-            r_countries = Country.objects.filter(code=q_country)
-            if r_countries.exists():
-                r_cyi = r_cyi.filter(country=r_countries[0])
-
-        if q_indicator is not None:
-            r_indicators = Indicator.objects.filter(code=q_indicator)
-            if r_indicators.exists():
-                r_cyi = r_cyi.filter(indicator=r_indicators[0])
-
-        if q_year is not None and q_year.isdigit():
-            r_cyi = r_cyi.filter(year=q_year)
-
-        r_cyi = list(r_cyi.values('year','value','country__code','indicator__code'))
-        r_countries = list(r_countries.values())
-        r_indicators = list(r_indicators.values())
-
-        return {
-                'CountryYearIndicators' : r_cyi,
-                'Countries' : r_countries,
-                'Indicators' : r_indicators,
-                }
-
-    elif request.method == 'POST':
-        return { 'data' : None }
-
-def display_data_v2(request):
     if request.method == 'GET':
         q_country = request.GET.get('country', None)
         q_indicator = request.GET.get('indicator', None)
@@ -93,22 +57,13 @@ def display_data_v2(request):
         r_countries = list(r_countries.values())
         r_indicators = list(r_indicators.values())
 
-        return {
+        json = {
                 'CountryYearIndicators' : tmp_r,
                 'Countries' : r_countries,
                 'Indicators' : r_indicators,
                 }
 
     elif request.method == 'POST':
-        return { 'data' : None }
-
-def display_data(request):
-    json = { 'data' : None }
-
-    # TODO: Lazy way to avoid rewriting tests
-    if request.GET.get('v', 0) == 1:
-        json = display_data_v1(request)
-    else:
-        json = display_data_v2(request)
+        json = { 'data' : None }
 
     return JsonResponse(json)

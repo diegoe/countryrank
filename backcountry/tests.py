@@ -91,7 +91,7 @@ class DataAPIClientTestCase(TestCase):
         insert_test_data(self)
 
     def test_json_data_api_get_all(self):
-        response = self.client.get('/display_data/?v=1')
+        response = self.client.get('/display_data/')
 
         self.assertEqual(response.status_code, 200)
         json = response.json()
@@ -102,7 +102,7 @@ class DataAPIClientTestCase(TestCase):
 
         self.assertEqual(
                 len(json['CountryYearIndicators']),
-                CountryYearIndicator.objects.count())
+                Country.objects.count())
 
         self.assertEqual(
                 len(json['Countries']),
@@ -116,7 +116,7 @@ class DataAPIClientTestCase(TestCase):
         for country in self.test_data_countries:
             response = self.client.get(
                     '/display_data/',
-                    { 'v' : 1, 'country' : country.code })
+                    { 'country' : country.code })
 
             self.assertEqual(response.status_code, 200)
             json = response.json()
@@ -129,6 +129,4 @@ class DataAPIClientTestCase(TestCase):
 
             self.assertEqual(len(json['Countries']), 1)
             self.assertEqual(len(json['Indicators']), len(inds))
-            self.assertEqual(
-                    len(json['CountryYearIndicators']),
-                    CountryYearIndicator.objects.filter(country=country).count())
+            self.assertEqual( len(json['CountryYearIndicators']), 1)
