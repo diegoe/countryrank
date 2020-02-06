@@ -1,36 +1,21 @@
 <template>
   <div id="app">
-    <div v-for="country in jsondata.CountryYearIndicators" :key="country.id">
-      <CountryStats :country="country"/>
-    </div>
+    <router-view/>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import CountryStats from './components/CountryStats';
-
 export default {
   name: 'app',
   components: {
-    CountryStats,
   },
   data: function () {
-    return {
-      jsondata: '',
-    };
   },
   computed: {
   },
   methods: {
-    getJsonData: function() {
-      axios.get('/display_data/?country=PER').then(res => {
-         this.jsondata = res.data;
-      });
-    },
   },
-  mounted() {
-    this.getJsonData();
+  mounted: {
   },
 }
 </script>
