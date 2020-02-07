@@ -23,13 +23,27 @@ def display_data(request):
         q_year = request.GET.get('year', None)
         q_limit = request.GET.get('limit', None)
 
-        r_countries = Country.objects.all()
-        r_indicators = Indicator.objects.all()
-
         if q_country is not None:
-            r_countries = r_countries.filter(code=q_country)
+            r_countries = Country.objects.filter(code=q_country)
+        else:
+            r_countries = Country.objects.all()
+
         if q_indicator is not None:
-            r_indicators = r_indicators.filter(code=q_indicator)
+            r_indicators = Indicator.objects.filter(code=q_indicator)
+        else:
+            r_indicators = Indicator.objects.all()
+
+        r_cyi = CountryYearIndicator.objects.all()
+
+        cache_inds = {}
+        for i in r_indicators:
+            cache_inds[i.code] = {
+                    'code' : i.code,
+                    'name' : i.name,
+                    'id' : i.id,
+                    'data' : {},
+                    }
+        cache_ind_items = cache_inds.items()
 
         tmp_r = {}
         for c in r_countries:
@@ -37,36 +51,26 @@ def display_data(request):
                     'code' : c.code,
                     'name' : c.name,
                     'id' : c.id,
-                    'indicators': {},
+                    'indicators': cache_inds,
                     }
 
-            # We could iterate over the whole countryyearindicator_set,
-            # but that would require us to constantly access
-            # indicator__code in each CountryYearIndicator, meaning we
-            # would be hitting the Indicator table through the
-            # ForeignKey in CYI.indicator.
-            #
-            # Instead we just go over our much smaller Indicator table,
-            # and query the DB in chunks (per Indicator), reusing the
-            # Indicator code in the process.
-            for ind in r_indicators:
-                cyi_pool = c.countryyearindicator_set.filter(indicator=ind)
-
-                if not cyi_pool:
-                    continue
-
+            for k,v in cache_ind_items:
+                filters = {
+                        'country' : c,
+                        'indicator_id' : v['id'],
+                        }
                 if q_year is not None and q_year.isdigit():
-                    cyi_pool = cyi_pool.filter(year=q_year)
+                    filters['year'] = q_year
 
                 if q_limit is not None:
-                    cyi_pool = [cyi_pool.latest('year')]
+                    cyi_pool = r_cyi.filter(**filters)[:1]
+                else:
+                    cyi_pool = r_cyi.filter(**filters)
 
-                tmp_r[c.code]['indicators'][ind.code] = {
-                        'code' : ind.code,
-                        'name' : ind.name,
-                        'id' : ind.id,
-                        'data' : [{ 'year' : x.year, 'value' : x.value, 'id' : x.id } for x in cyi_pool],
-                        }
+                if not cyi_pool:
+                    tmp_r[c.code]['indicators'][k]['data'] = []
+                else:
+                    tmp_r[c.code]['indicators'][k]['data'] = [{ 'year' : x.year, 'value' : x.value, 'id' : x.id } for x in cyi_pool]
 
         r_countries = list(r_countries.values())
         r_indicators = list(r_indicators.values())
