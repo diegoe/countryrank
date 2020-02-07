@@ -1,5 +1,5 @@
 <template>
-  <div id="home">
+  <div id="single">
     <div v-for="country in jsondata.CountryYearIndicators" :key="country.id">
       <CountryStats :country="country"/>
     </div>
@@ -11,10 +11,13 @@ import axios from 'axios';
 import CountryStats from '../components/CountryStats';
 
 export default {
-  name: 'Home',
+  name: 'Single',
   components: {
     CountryStats,
   },
+  props: [
+    'code',
+  ],
   data: function () {
     return {
       jsondata: '',
@@ -24,9 +27,15 @@ export default {
   },
   methods: {
     getJsonData: function() {
-      axios.get('/display_data/?country=USA').then(res => {
-         this.jsondata = res.data;
-      });
+      if (this.code) {
+        axios.get('/display_data/?country=' + this.code).then(res => {
+           this.jsondata = res.data;
+        });
+      } else {
+        axios.get('/display_data/?country=USA').then(res => {
+           this.jsondata = res.data;
+        });
+      }
     },
   },
   mounted() {
@@ -42,7 +51,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
-#home {
+#single {
   margin-top: 60px;
   margin: 60px 10%;
 }

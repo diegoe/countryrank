@@ -3,7 +3,8 @@ import VueRouter from 'vue-router';
 
 import TrendChart from 'vue-trend-chart';
 
-import Home from './pages/Home';
+import Single from './pages/Single';
+import Overview from './pages/Overview';
 
 Vue.use(VueRouter);
 Vue.use(TrendChart);
@@ -11,7 +12,8 @@ Vue.use(TrendChart);
 Vue.config.productionTip = false
 
 const routes = [
-  { path: '/', component: Home },
+  { path: '/', component: Overview },
+  { path: '/country/:code', component: Single, props: true, name: 'country' },
 ];
 
 const router = new VueRouter({
