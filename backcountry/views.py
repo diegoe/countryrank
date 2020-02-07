@@ -26,17 +26,18 @@ def display_data(request):
         r_indicators = Indicator.objects.all()
 
         if q_country is not None:
-            r_countries = Country.objects.filter(code=q_country)
+            r_countries = r_countries.filter(code=q_country)
         if q_indicator is not None:
-            r_indicators = Indicator.objects.filter(code=q_indicator)
+            r_indicators = r_indicators.filter(code=q_indicator)
 
         tmp_r = {}
         for c in r_countries:
-            tmp_r[c.code] = {}
-            tmp_r[c.code]['code'] = c.code
-            tmp_r[c.code]['name'] = c.name
-            tmp_r[c.code]['id'] = c.id
-            tmp_r[c.code]['indicators'] = {}
+            tmp_r[c.code] = {
+                    'code' : c.code,
+                    'name' : c.name,
+                    'id' : c.id,
+                    'indicators': {},
+                    }
 
             # We could iterate over the whole countryyearindicator_set,
             # but that would require us to constantly access
@@ -50,14 +51,18 @@ def display_data(request):
             for ind in r_indicators:
                 cyi_pool = c.countryyearindicator_set.filter(indicator=ind)
 
+                if not cyi_pool:
+                    continue
+
                 if q_year is not None and q_year.isdigit():
                     cyi_pool = cyi_pool.filter(year=q_year)
 
-                tmp_r[c.code]['indicators'][ind.code] = {}
-                tmp_r[c.code]['indicators'][ind.code]['data'] = [{ 'year' : x.year, 'value' : x.value, 'id': x.id } for x in cyi_pool]
-                tmp_r[c.code]['indicators'][ind.code]['code'] = ind.code
-                tmp_r[c.code]['indicators'][ind.code]['name'] = ind.name
-                tmp_r[c.code]['indicators'][ind.code]['id'] = ind.id
+                tmp_r[c.code]['indicators'][ind.code] = {
+                        'code' : ind.code,
+                        'name' : ind.name,
+                        'id' : ind.id,
+                        'data' : [{ 'year' : x.year, 'value' : x.value, 'id' : x.id } for x in cyi_pool],
+                        }
 
         r_countries = list(r_countries.values())
         r_indicators = list(r_indicators.values())
