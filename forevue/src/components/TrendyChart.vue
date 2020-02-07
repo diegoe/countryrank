@@ -42,6 +42,7 @@ export default {
       return [{
         data: formatted,
         fill: true,
+        className: this.datasets.code.split('.').join(''),
       }];
     },
   },
@@ -73,5 +74,14 @@ export default {
 .trendyp {
   height: 40px;
   display: block;
+}
+.ENATMCO2EPC,
+.IPPATRESD,
+.SPDYNLE00IN,
+.IPPATNRES,
+.NYGDPMKTPCD,
+.SPPOPTOTL,
+.TXVALTECHMFZS {
+  /* Optional chart styling */
 }
 </style>
