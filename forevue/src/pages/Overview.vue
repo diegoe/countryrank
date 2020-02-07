@@ -8,9 +8,11 @@
       development divided into a toy backend and an editable frontend.
     </p>
     <div class="filterarea">
-      <input type="text" class="filterfield" placeholder="Search your country" />
+      <input type="text" class="filterfield" placeholder="Search your country"
+        v-model="searchQuery"
+        />
     </div>
-    <span v-for="country in jsondata.CountryYearIndicators" :key="country.id">
+    <span v-for="country in filteredCountries" :key="country.id">
       <h2>
         <router-link
           :to="{ name: 'country', params: { code: country.code }}">
@@ -25,7 +27,7 @@
         <p class="countrylink">
         <router-link
           :to="{ name: 'country', params: { code: country.code }}">
-          Complete statistics about {{ country.name }} ➜
+          Complete statistics about {{ country.name }} →
         </router-link>
         </p>
       </div>
@@ -41,19 +43,42 @@ export default {
   components: {
   },
   props: [
-    'code',
   ],
-  data: function () {
+  data: function() {
     return {
-      jsondata: '',
-    };
+      searchQuery: '',
+      countries: '',
+    }
   },
   computed: {
+    filteredCountries: function() {
+      let filterKey = this.searchQuery && this.searchQuery.toLowerCase();
+      let data = this.countries;
+      let filtered = {}
+
+      const test = function(x) {
+        return x.toLowerCase().includes(filterKey);
+      };
+
+      if (filterKey.length < 1) {
+        return data;
+      } else {
+        for (let key in data) {
+          if (data.hasOwnProperty(key) &&
+              data[key].hasOwnProperty('name') &&
+              test(data[key]['name'])) {
+            filtered[key] = data[key];
+          }
+        }
+
+        return filtered;
+      }
+    },
   },
   methods: {
     getJsonData: function() {
       axios.get('/display_data/?limit=1').then(res => {
-         this.jsondata = res.data;
+         this.countries = res.data.CountryYearIndicators;
       });
     },
     latestData: function(arr) {
