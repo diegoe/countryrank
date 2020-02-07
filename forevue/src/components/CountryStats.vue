@@ -2,9 +2,14 @@
   <div>
     <h2>{{ country.name }}</h2>
     <div v-for="ind in country.indicators" :key="ind.code" class="trendyblock">
-      <h3>{{ ind.name }} ({{ yearRange(ind.data).from }} – {{ yearRange(ind.data).to }}) </h3>
-      <TrendyChart :datasets="ind" :name="ind.name" :decimals="formats[ind.code]"/>
-      <ChunkyTable :datasets="ind.data" :name="ind.name" />
+      <div v-if="ind.data.length > 1">
+        <h3>{{ ind.name }} ({{ yearRange(ind.data).from }} – {{ yearRange(ind.data).to }}) </h3>
+        <TrendyChart
+          :datasets="ind"
+          :name="ind.name"
+          :decimals="formats[ind.code]" />
+        <ChunkyTable :datasets="ind.data" :name="ind.name" />
+      </div>
     </div>
   </div>
 </template>
@@ -44,7 +49,9 @@ export default {
   },
   methods: {
     yearRange: function(dataset) {
-      if (!dataset) {
+      if (!dataset ||
+          dataset.length < 1 ||
+          !dataset[0].hasOwnProperty('year')) {
         return { from: 0, to: 0 };
       } else {
         return {
