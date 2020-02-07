@@ -13,7 +13,8 @@
       v-model="backvalue"
       v-on:focus="focused"
       v-on:blur="blurred"
-      v-on:keyup.enter="edit = false"/>
+      v-on:keyup.enter="edit = false"
+      />
   </div>
 </template>
 
@@ -44,8 +45,8 @@ export default {
         return this.changedValue ? this.changedValue : this.value.toString();
       },
       set: function(changed) {
-        this.$emit('input', changed);
         this.changedValue = changed;
+        this.$emit('update:value', { id: this.objid, value: this.backvalue });
       },
     },
   },
@@ -59,6 +60,7 @@ export default {
     },
     blurred: function() {
       this.edit = false;
+
       let patch = {
         'op': 'replace',
         'path': this.jsonpath,

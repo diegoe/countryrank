@@ -7,8 +7,13 @@
         <TrendyChart
           :datasets="ind"
           :name="ind.name"
-          :decimals="formats[ind.code]" />
-        <ChunkyTable :datasets="ind.data" :name="ind.name" />
+          :decimals="formats[ind.code]"
+          />
+        <ChunkyTable
+          :datasets="ind.data"
+          :name="ind.name"
+          v-on:update:datasets="updateDatasets"
+          />
       </div>
     </div>
   </div>
@@ -60,6 +65,16 @@ export default {
         };
       }
     },
+    updateDatasets: function(patch) {
+      let el = 0;
+      for(let i in this.country.indicators) {
+        let tmp = this.country.indicators[i].data.find(x => x.id == patch.id);
+        if (tmp)
+          el = tmp;
+      }
+
+      el.value = patch.value;
+    }
   },
   mounted() {
   },

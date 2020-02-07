@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table class="chunkytable" v-for="(ind,index) in chunk(datasets)" :key="index">
+    <table class="chunkytable" v-for="(ind) in chunk(datasets)" :key="ind.id">
       <tbody>
         <tr v-for="i in ind" :key="i.id">
           <td>
@@ -9,7 +9,11 @@
             </label>
           </td>
           <td>
-            <EditableCell :value="i.value" :objid="i.id" />
+            <EditableCell
+              :value="i.value"
+              :objid="i.id"
+              v-on:update:value="updateValue"
+              />
           </td>
         </tr>
       </tbody>
@@ -36,7 +40,7 @@ export default {
   computed: {
   },
   methods: {
-    chunk: function chunk(arr) {
+    chunk: function(arr) {
       let chunkSize=10;
       let  R = [];
       for (let i=0,len=arr.length; i<len; i+=chunkSize) {
@@ -44,6 +48,9 @@ export default {
       }
       return R;
     },
+    updateValue: function(patch) {
+      this.$emit('update:datasets', patch);
+    }
   },
 }
 </script>
