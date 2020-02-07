@@ -21,6 +21,7 @@ def display_data(request):
         q_country = request.GET.get('country', None)
         q_indicator = request.GET.get('indicator', None)
         q_year = request.GET.get('year', None)
+        q_limit = request.GET.get('limit', None)
 
         r_countries = Country.objects.all()
         r_indicators = Indicator.objects.all()
@@ -56,6 +57,9 @@ def display_data(request):
 
                 if q_year is not None and q_year.isdigit():
                     cyi_pool = cyi_pool.filter(year=q_year)
+
+                if q_limit is not None:
+                    cyi_pool = [cyi_pool.latest('year')]
 
                 tmp_r[c.code]['indicators'][ind.code] = {
                         'code' : ind.code,

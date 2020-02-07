@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     getJsonData: function() {
-      axios.get('/display_data/').then(res => {
+      axios.get('/display_data/?limit=1').then(res => {
          this.jsondata = res.data;
       });
     },

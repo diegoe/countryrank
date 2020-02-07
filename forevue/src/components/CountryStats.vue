@@ -2,13 +2,20 @@
   <div>
     <h2>{{ country.name }}</h2>
     <div v-for="ind in country.indicators" :key="ind.code" class="trendyblock">
+      <h3>
+        {{ ind.name }}
+        <span v-if="ind.data.length > 1">
+          ({{ yearRange(ind.data).from }} – {{ yearRange(ind.data).to }})
+        </span>
+      </h3>
       <div v-if="ind.data.length > 1">
-        <h3>{{ ind.name }} ({{ yearRange(ind.data).from }} – {{ yearRange(ind.data).to }}) </h3>
         <TrendyChart
           :datasets="ind"
           :name="ind.name"
           :decimals="formats[ind.code]"
           />
+      </div>
+      <div v-if="ind.data.length > 0">
         <ChunkyTable
           :datasets="ind.data"
           :name="ind.name"
