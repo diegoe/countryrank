@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h2>{{ country.name }}</h2>
     <div v-for="ind in country.indicators" :key="ind.code" class="trendyblock">
       <h3>
         {{ ind.name }}

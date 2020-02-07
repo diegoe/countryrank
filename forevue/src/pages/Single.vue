@@ -1,8 +1,24 @@
 <template>
   <div id="single">
-    <div v-for="country in jsondata.CountryYearIndicators" :key="country.id">
-      <CountryStats :country="country"/>
-    </div>
+    <h1>
+      countryrank:
+      <br/>
+      {{ country.name }}
+    </h1>
+    <p class="herotext">
+      Feel free to correct any incorrect value by double-clicking any
+      number next to its corresponding year.
+      <br/><br/>
+      Statistics might be incomplete due to lack of reporting or missing
+      records at the World Bank. Only the available information is
+      presented.
+      <br/><br/>
+      <router-link
+        :to="{ name: 'overview' }">
+        ←  Back to World Overview
+      </router-link>
+    </p>
+    <CountryStats :country="country"/>
   </div>
 </template>
 
@@ -21,6 +37,7 @@ export default {
   data: function () {
     return {
       jsondata: '',
+      country: '',
     };
   },
   computed: {
@@ -30,10 +47,12 @@ export default {
       if (this.code) {
         axios.get('/display_data/?country=' + this.code).then(res => {
            this.jsondata = res.data;
+           this.country = this.jsondata.CountryYearIndicators[this.code];
         });
       } else {
         axios.get('/display_data/?country=USA').then(res => {
            this.jsondata = res.data;
+           this.country = res.data.CountryYearIndicators['USA'];
         });
       }
     },
@@ -58,5 +77,9 @@ export default {
 .trendyblock {
   margin: auto;
   margin-right: 5%;
+}
+#single .herotext {
+  margin: 3% 5%;
+  margin-right: 10%;
 }
 </style>

@@ -12,7 +12,7 @@ Vue.use(TrendChart);
 Vue.config.productionTip = false
 
 const routes = [
-  { path: '/', component: Overview },
+  { path: '/', component: Overview, name: 'overview' },
   { path: '/country/:code', component: Single, props: true, name: 'country' },
 ];
 
