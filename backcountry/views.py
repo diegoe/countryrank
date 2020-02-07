@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -7,9 +7,7 @@ from backcountry.models import CountryYearIndicator, Country, Indicator
 import json
 
 def index(request):
-    return HttpResponse('''
-        Placeholder for enduser UI.
-        ''')
+    return redirect('/static/backcountry/index.html')
 
 # TODO: This is a cheap way to avoid having to figure out what to do
 # with the csfr cookie from Django.
